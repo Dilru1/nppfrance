@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Interactive Multi-Step Form</title>
+    <style>
+        /* Basic styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .form-step {
+            display: none;
+        }
+        .form-step.active {
+            display: block;
+        }
+        .step-indicators {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .step-indicators .step {
+            width: 20%;
+            text-align: center;
+            padding: 10px;
+            border-bottom: 2px solid #ccc;
+            color: #ccc;
+        }
+        .step-indicators .step.active {
+            border-color: #4CAF50;
+            color: #4CAF50;
+        }
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button.next {
+            background-color: #4CAF50;
+            color: white;
+        }
+        button.prev {
+            background-color: #ccc;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Research Survey</h2>
+
+<!-- Step indicators -->
+<div class="step-indicators">
+    <div class="step active">Step 1</div>
+    <div class="step">Step 2</div>
+    <div class="step">Step 3</div>
+</div>
+
+<form id="multi-step-form">
+    <!-- Step 1 -->
+    <div class="form-step active">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="form-step">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="form-step">
+        <label for="PAthirana">Comments:</label>
+        <textarea id="comments" name="comments" rows="4" required></textarea>
+    </div>
+
+    <!-- Navigation buttons -->
+    <div class="buttons">
+        <button type="button" class="prev" onclick="changeStep(-1)" disabled>Previous</button>
+        <button type="button" class="next" onclick="changeStep(1)">Next</button>
+    </div>
+</form>
+
+<script>
+    let currentStep = 0;
+    const formSteps = document.querySelectorAll('.form-step');
+    const stepIndicators = document.querySelectorAll('.step');
+    const prevButton = document.querySelector('.prev');
+    const nextButton = document.querySelector('.next');
+
+    function updateStep() {
+        formSteps.forEach((step, index) => {
+            step.classList.toggle('active', index === currentStep);
+        });
+        stepIndicators.forEach((step, index) => {
+            step.classList.toggle('active', index === currentStep);
+        });
+        prevButton.disabled = currentStep === 0;
+        nextButton.textContent = currentStep === formSteps.length - 1 ? 'Submit' : 'Next';
+    }
+
+    function changeStep(direction) {
+        if (direction === 1 && !validateCurrentStep()) return;
+        currentStep += direction;
+        if (currentStep >= formSteps.length) {
+            document.getElementById('multi-step-form').submit();
+        } else {
+            updateStep();
+        }
+    }
+
+    function validateCurrentStep() {
+        const currentInputs = formSteps[currentStep].querySelectorAll('input, textarea');
+        for (const input of currentInputs) {
+            if (!input.checkValidity()) {
+                input.reportValidity();
+                return false;
+            }
+        }
+        return true;
+    }
+
+    updateStep();
+</script>
+
+</body>
+</html>
